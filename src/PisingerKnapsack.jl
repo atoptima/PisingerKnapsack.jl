@@ -12,7 +12,7 @@ else
 end
 
 include("Cwrapper.jl")
-#include("MOIwrapper.jl")
+include("MOIwrapper.jl")
 include("doubleknp.jl")
 
 export PisingerKnapsackSolver
