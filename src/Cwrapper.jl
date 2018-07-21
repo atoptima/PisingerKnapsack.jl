@@ -5,9 +5,7 @@ const Double = Float64
 import ..PisingerKnapsack
 
 export bouknap,
-       dbouknap,
-       minknap,
-       dminknap
+       minknap
 
 # helper macros/functions
 macro pk_min_ccall(func, args...)

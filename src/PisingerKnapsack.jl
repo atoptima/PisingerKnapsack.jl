@@ -4,6 +4,7 @@ module PisingerKnapsack
 
 const Double = Float64
 const depsfile = joinpath(dirname(@__FILE__), "..", "deps", "deps.jl")
+
 if isfile(depsfile)
     include(depsfile)
 else
@@ -12,7 +13,7 @@ end
 
 include("Cwrapper.jl")
 #include("MOIwrapper.jl")
-#include("doubleknp.jl")
+include("doubleknp.jl")
 
 export PisingerKnapsackSolver
 
