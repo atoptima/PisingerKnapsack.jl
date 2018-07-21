@@ -23,7 +23,7 @@ provides(SimpleBuild,
     (@build_steps begin
         FileDownloader("$pisinger_webpage_uri/bouknap.c", "$lib_pisinger_bouknap/bouknap.c")
         `sed -i '' '/values\.h/d' $lib_pisinger_bouknap/bouknap.c` # Removing deprecated headers
-        `sed -i '' 's/.*malloc\.h.*/\#include \"bouknap\.h\"/' $lib_pisinger_bouknap/bouknap.c`
+        `sed -i '' '/malloc\.h/d' $lib_pisinger_bouknap/bouknap.c`
         CreateDirectory(lib_bouknap_build)
         @build_steps begin
             ChangeDirectory(lib_bouknap_build)
@@ -36,7 +36,7 @@ provides(SimpleBuild,
     (@build_steps begin
         FileDownloader("$pisinger_webpage_uri/minknap.c", "$lib_pisinger_minknap/minknap.c")
         `sed -i '' '/values\.h/d' $lib_pisinger_minknap/minknap.c`
-        `sed -i '' 's/.*malloc\.h.*/\#include \"minknap\.h\"/' $lib_pisinger_minknap/minknap.c`
+        `sed -i '' '/malloc\.h/d' $lib_pisinger_minknap/minknap.c`
         CreateDirectory(lib_minknap_build)
         @build_steps begin
             ChangeDirectory(lib_minknap_build)
