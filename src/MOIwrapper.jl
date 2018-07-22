@@ -152,6 +152,9 @@ function loadconstraint!(optimizer::PisingerKnapsackOptimizer, ci, idxmap, f::MO
         varid = getvarid(idxmap, term.variable_index)
         setweight!(optimizer.inner_model, varid, weight)
     end
+    capacity = Integer(floor(s.upper))
+    (s.upper > capacity) && error("Capacity of knapsack must be integer.")
+    setcapacity!(optimizer.inner_model, capacity)
 end
 
 function additems!(optimizer::PisingerKnapsackOptimizer, idxmap, vis_src)

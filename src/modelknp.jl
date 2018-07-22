@@ -1,5 +1,7 @@
 const IntegerDouble = Union{Integer, Double}
 
+@enum PisingerAlgo BouKnap DoubleMinKnap MinKnap NotFound
+
 mutable struct PisingerKnapsackModel
     nb_items::Integer
     profits::Vector{IntegerDouble}
@@ -40,6 +42,27 @@ function setitemlb!(model::PisingerKnapsackModel, varid::Int, lb::Integer)
     model.items_lb[varid] = lb
 end
 
+function setcapacity!(model::PisingerKnapsackModel, capacity::Integer)
+    model.capacity = capacity
+end
+
 function optimize!(model::PisingerKnapsackModel)
-    error("TODO : optimize!")
+    @show model
+    algo, sort_items = eval_work_to_be_done(model)
+    #solve(profits, weights, lbs, ubs, capacity, algo)
+end
+
+function eval_work_to_be_done(model::PisingerKnapsackModel)
+    integer_profits = mapreduce(p -> (p == floor(p)), &, model.profits)
+    zero_lb_items = mapreduce(lb -> (lb == 0), &, model.items_lb)
+    one_ub_items = mapreduce(ub -> (ub == 1), &, model.items_ub)
+    algo = NotFound
+    if integer_profits && one_ub_items
+        algo = MinKnap
+    elseif !integer_profits && one_ub_items
+        algo = DoubleMinKnap
+    elseif integer_profits && !one_ub_items
+        algo = BouKnap
+    end
+    return algo, !zero_lb_items
 end
