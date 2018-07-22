@@ -54,7 +54,6 @@ function MOI.empty!(optimizer::PisingerKnapsackOptimizer)
     error("empty! TODO")
 end
 
-
 """
     copy!(dest::ModelLike, src::ModelLike; copynames=true, warnattributes=true)::CopyResult
 
@@ -96,7 +95,6 @@ function MOI.copy!(optimizer::PisingerKnapsackOptimizer, src::MOI.ModelLike; cop
     return MOI.CopyResult(MOI.CopySuccess, "Model was copied succefully.", MOIU.IndexMap(idxmap.varmap, idxmap.conmap))
 end
 
-
 """
     supportsconstraint(model::ModelLike, ::Type{F}, ::Type{S})::Bool where {F<:AbstractFunction,S<:AbstractSet}
 
@@ -110,6 +108,83 @@ MOI.supportsconstraint(::PisingerKnapsackOptimizer, ::Type{<:MOI.SingleVariable}
 MOI.supportsconstraint(::PisingerKnapsackOptimizer, ::Type{<:MOI.SingleVariable}, ::Type{<:MOI.LessThan}) = true
 MOI.supportsconstraint(::PisingerKnapsackOptimizer, ::Type{<:MOI.ScalarAffineFunction{Float64}}, ::Type{<:MOI.LessThan}) = true
 
+"""
+    canget(optimizer::AbstractOptimizer, attr::AbstractOptimizerAttribute)::Bool
+Return a `Bool` indicating whether `optimizer` currently has a value for the attribute specified by attr type `attr`.
+    canget(model::ModelLike, attr::AbstractModelAttribute)::Bool
+Return a `Bool` indicating whether `model` currently has a value for the attribute specified by attribute type `attr`.
+    canget(model::ModelLike, attr::AbstractVariableAttribute, ::Type{VariableIndex})::Bool
+Return a `Bool` indicating whether `model` currently has a value for the attribute specified by attribute type `attr` applied to *every* variable of the model.
+    canget(model::ModelLike, attr::AbstractConstraintAttribute, ::Type{ConstraintIndex{F,S}})::Bool where {F<:AbstractFunction,S<:AbstractSet}
+Return a `Bool` indicating whether `model` currently has a value for the attribute specified by attribute type `attr` applied to *every* `F`-in-`S` constraint.
+    canget(model::ModelLike, ::Type{VariableIndex}, name::String)::Bool
+Return a `Bool` indicating if a variable with the name `name` exists in `model`.
+    canget(model::ModelLike, ::Type{ConstraintIndex{F,S}}, name::String)::Bool where {F<:AbstractFunction,S<:AbstractSet}
+Return a `Bool` indicating if an `F`-in-`S` constraint with the name `name` exists in `model`.
+    canget(model::ModelLike, ::Type{ConstraintIndex}, name::String)::Bool
+Return a `Bool` indicating if a constraint of any kind with the name `name` exists in `model`.
+### Examples
+```julia
+canget(model, ObjectiveValue())
+canget(model, VariablePrimalStart(), VariableIndex)
+canget(model, VariablePrimal(), VariableIndex)
+canget(model, ConstraintPrimal(), ConstraintIndex{SingleVariable,EqualTo{Float64}})
+canget(model, VariableIndex, "var1")
+canget(model, ConstraintIndex{ScalarAffineFunction{Float64},LessThan{Float64}}, "con1")
+canget(model, ConstraintIndex, "con1")
+```
+"""
+# TODO MOI.canget(::PisingerKnapsackOptimizer, ::MOI.TerminationStatus) = true
+# TODO MOI.canget(::PisingerKnapsackOptimizer, ::MOI.ObjectiveValue) = true
+# TODO MOI.canget(::PisingerKnapsackOptimizer, ::MOI.VariablePrimal, ::Type{MOI.VariableIndex}) = true
+
+"""
+    get(optimizer::AbstractOptimizer, attr::AbstractOptimizerAttribute)
+Return an attribute `attr` of the optimizer `optimizer`.
+    get(model::ModelLike, attr::AbstractModelAttribute)
+Return an attribute `attr` of the model `model`.
+    get(model::ModelLike, attr::AbstractVariableAttribute, v::VariableIndex)
+Return an attribute `attr` of the variable `v` in model `model`.
+    get(model::ModelLike, attr::AbstractVariableAttribute, v::Vector{VariableIndex})
+Return a vector of attributes corresponding to each variable in the collection `v` in the model `model`.
+    get(model::ModelLike, attr::AbstractConstraintAttribute, c::ConstraintIndex)
+Return an attribute `attr` of the constraint `c` in model `model`.
+    get(model::ModelLike, attr::AbstractConstraintAttribute, c::Vector{ConstraintIndex{F,S}})
+Return a vector of attributes corresponding to each constraint in the collection `c` in the model `model`.
+    get(model::ModelLike, ::Type{VariableIndex}, name::String)
+If a variable with name `name` exists in the model `model`, return the corresponding index, otherwise throw a `KeyError`.
+    get(model::ModelLike, ::Type{ConstraintIndex{F,S}}, name::String) where {F<:AbstractFunction,S<:AbstractSet}
+If an `F`-in-`S` constraint with name `name` exists in the model `model`, return the corresponding index, otherwise throw a `KeyError`.
+    get(model::ModelLike, ::Type{ConstraintIndex}, name::String)
+If *any* constraint with name `name` exists in the model `model`, return the corresponding index, otherwise throw a `KeyError`. This version is available for convenience but may incur a performance penalty because it is not type stable.
+### Examples
+```julia
+get(model, ObjectiveValue())
+get(model, VariablePrimal(), ref)
+get(model, VariablePrimal(5), [ref1, ref2])
+get(model, OtherAttribute("something specific to cplex"))
+get(model, VariableIndex, "var1")
+get(model, ConstraintIndex{ScalarAffineFunction{Float64},LessThan{Float64}}, "con1")
+get(model, ConstraintIndex, "con1")
+```
+"""
+# TODO function MOI.get(optimizer::PisingerKnapsackOptimizer, attr::MOI.TerminationStatus)
+#
+# end
+#
+# TODO function MOI.get(optimizer::PisingerKnapsackOptimizer, attr::MOI.ObjectiveValue)
+#
+# end
+#
+# TODO function MOI.get(optimizer::PisingerKnapsackOptimizer, attr::MOI.VariablePrimal, id::MOI.VariableIndex)
+#
+# end
+#
+# TODO function MOI.get(optimizer::PisingerKnapsackOptimizer, attr::MOI.VariablePrimal, ids::Vector{JuMP.VariableRef})
+#
+# end
+
+# Others functions to set the inner model
 knpconstraintcounter(::PisingerKnapsackOptimizer, ::Type{<:MOI.AbstractFunction}, ::Type{<:MOI.AbstractSet}) = 0
 knpconstraintcounter(::PisingerKnapsackOptimizer, ::Type{<:MOI.ScalarAffineFunction{Float64}}, ::Type{<:MOI.LessThan}) = 1
 

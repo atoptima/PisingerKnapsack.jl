@@ -13,6 +13,7 @@ mutable struct PisingerKnapsackModel
     capacity::Integer
     items_ub::Vector{Integer}
     items_lb::Vector{Integer}
+    # TODO Solution
     function PisingerKnapsackModel()
         new(0, Vector{IntegerDouble}(), Vector{Integer}(), 0, Vector{Integer}(), Vector{Integer}())
     end
@@ -51,7 +52,7 @@ function setcapacity!(model::PisingerKnapsackModel, capacity::Integer)
 end
 
 function optimize!(model::PisingerKnapsackModel)
-    algo, sort_items = eval_work_to_be_done(model)
+    algo, sort_items = preprocessing(model)
     # Work on data (eliminate items with negative profit for instance...)
     profits = model.profits
     weights = model.weights
@@ -60,10 +61,10 @@ function optimize!(model::PisingerKnapsackModel)
     # Solve the model
     (val, sol) = solve(model.profits, weights, lbs, ubs, model.capacity, algo)
     # Store the solution
-    
+    # TODO
 end
 
-function eval_work_to_be_done(model::PisingerKnapsackModel)
+function preprocessing(model::PisingerKnapsackModel)
     integer_profits = mapreduce(p -> (p == floor(p)), &, model.profits)
     zero_lb_items = mapreduce(lb -> (lb == 0), &, model.items_lb)
     one_ub_items = mapreduce(ub -> (ub == 1), &, model.items_ub)
