@@ -1,6 +1,10 @@
 const IntegerDouble = Union{Integer, Double}
 
-@enum PisingerAlgo BouKnap DoubleMinKnap MinKnap NotFound
+abstract type PisingerAlgo end
+struct Knap <: PisingerAlgo end
+struct BouKnap <: PisingerAlgo end
+struct DoubleMinKnap <: PisingerAlgo end
+struct MinKnap <: PisingerAlgo end
 
 mutable struct PisingerKnapsackModel
     nb_items::Integer
@@ -47,22 +51,48 @@ function setcapacity!(model::PisingerKnapsackModel, capacity::Integer)
 end
 
 function optimize!(model::PisingerKnapsackModel)
-    @show model
     algo, sort_items = eval_work_to_be_done(model)
-    #solve(profits, weights, lbs, ubs, capacity, algo)
+    # Work on data (eliminate items with negative profit for instance...)
+    profits = model.profits
+    weights = model.weights
+    lbs = model.items_lb
+    ubs = model.items_ub
+    # Solve the model
+    (val, sol) = solve(model.profits, weights, lbs, ubs, model.capacity, algo)
+    # Store the solution
+    
 end
 
 function eval_work_to_be_done(model::PisingerKnapsackModel)
     integer_profits = mapreduce(p -> (p == floor(p)), &, model.profits)
     zero_lb_items = mapreduce(lb -> (lb == 0), &, model.items_lb)
     one_ub_items = mapreduce(ub -> (ub == 1), &, model.items_ub)
-    algo = NotFound
+    algo = Knap()
     if integer_profits && one_ub_items
-        algo = MinKnap
+        algo = MinKnap()
     elseif !integer_profits && one_ub_items
-        algo = DoubleMinKnap
+        algo = DoubleMinKnap()
     elseif integer_profits && !one_ub_items
-        algo = BouKnap
+        algo = BouKnap()
     end
-    return algo, !zero_lb_items
+    return typeof(algo), !zero_lb_items
+end
+
+function solve(profits, weights, lbs, ubs, capacity, algo::Type{<:PisingerAlgo})
+     error("No algorithm found to solve the instance.")
+end
+
+function solve(profits, weights, lbs, ubs, capacity, algo::Type{<:MinKnap})
+    profits = Vector{Integer}(profits)
+    return PKCI.minknap(profits, weights, capacity)
+end
+
+function solve(profits, weights, lbs, ubs, capacity, algo::Type{<:DoubleMinKnap})
+    profits = Vector{Double}(profits)
+    return doubleminknap(profits, weights, capacity)
+end
+
+function solve(profits, weights, lbs, ubs, capacity, algo::Type{<:BouKnap})
+    profits = Vector{Integer}(profits)
+    return PKCI.bouknap(profits, weights, ubs, capacity)
 end
