@@ -7,18 +7,6 @@ const MOI = MathOptInterface
 const MOIU = MathOptInterface.Utilities
 const PKCI = PisingerKnapsackCInterface
 
-mutable struct PisingerKnapsackModel
-    nb_items::Integer
-    profits::Vector{Union{Integer, Double}}
-    weights::Vector{Integer}
-    capacity::Integer
-    items_ub::Vector{Integer}
-    items_lb::Vector{Integer}
-    function PisingerKnapsackModel()
-        new(0, Vector{Union{Integer, Double}}(), Vector{Integer}(), 0, Vector{Integer}(), Vector{Integer}())
-    end
-end
-
 mutable struct PisingerKnapsackOptimizer <: MOI.AbstractOptimizer
     inner_model::PisingerKnapsackModel
     function PisingerKnapsackOptimizer()
@@ -26,16 +14,13 @@ mutable struct PisingerKnapsackOptimizer <: MOI.AbstractOptimizer
     end
 end
 
-# Solver Interface
-
 """
     optimize!(optimizer::AbstractOptimizer)
 
 Start the solution procedure.
 """
 function MOI.optimize!(optimizer::PisingerKnapsackOptimizer)
-    @show optimizer.inner_model
-    error("optimize! : TODO")
+    optimize!(optimizer.inner_model)
 end
 
 """
@@ -57,7 +42,7 @@ Returns `false` if the `model` has any model attribute set or has any variables 
 Note that an empty model can have optimizer attributes set.
 """
 function MOI.isempty(optimizer::PisingerKnapsackOptimizer)
-    return (optimizer.inner_model.nb_items == 0)
+    return (getnbitems(optimizer.inner_model) == 0)
 end
 
 """
@@ -96,7 +81,7 @@ function MOI.copy!(optimizer::PisingerKnapsackOptimizer, src::MOI.ModelLike; cop
         end
         nb_knp += knpconstraintcounter(optimizer, Func, Set)
 
-        updateinnermodel!(optimizer.inner_model, src, idxmap, Func, Set)
+        updateinnermodel!(optimizer, src, idxmap, Func, Set)
     end
 
     (nb_knp != 1) && error("PisingerKnapsackOptimizer can solve only one knapsack problem at a time.")
@@ -128,58 +113,57 @@ MOI.supportsconstraint(::PisingerKnapsackOptimizer, ::Type{<:MOI.ScalarAffineFun
 knpconstraintcounter(::PisingerKnapsackOptimizer, ::Type{<:MOI.AbstractFunction}, ::Type{<:MOI.AbstractSet}) = 0
 knpconstraintcounter(::PisingerKnapsackOptimizer, ::Type{<:MOI.ScalarAffineFunction{Float64}}, ::Type{<:MOI.LessThan}) = 1
 
-function updateinnermodel!(o::PisingerKnapsackModel, src::MOI.ModelLike, idxmap, Func::Type{<:MOI.AbstractFunction}, Set::Type{<:MOI.AbstractSet})
+function getvarid(idxmap, moivarindex)
+    return idxmap.varmap[moivarindex].value
+end
+
+function updateinnermodel!(optimizer::PisingerKnapsackOptimizer, src::MOI.ModelLike, idxmap, Func::Type{<:MOI.AbstractFunction}, Set::Type{<:MOI.AbstractSet})
     for ci in MOI.get(src, MOI.ListOfConstraintIndices{Func, Set}())
         f = MOI.get(src, MOI.ConstraintFunction(), ci)
         s = MOI.get(src, MOI.ConstraintSet(), ci)
-        loadconstraint!(o, ci, idxmap, f, s)
+        loadconstraint!(optimizer, ci, idxmap, f, s)
     end
 end
 
-function loadconstraint!(o::PisingerKnapsackModel, ci, idxmap, f::MOI.SingleVariable, s::MOI.ZeroOne)
+function loadconstraint!(optimizer::PisingerKnapsackOptimizer, ci, idxmap, f::MOI.SingleVariable, s::MOI.ZeroOne)
     # Nothing to do
 end
 
-function loadconstraint!(o::PisingerKnapsackModel, ci, idxmap, f::MOI.SingleVariable, s::MOI.Integer)
+function loadconstraint!(optimizer::PisingerKnapsackOptimizer, ci, idxmap, f::MOI.SingleVariable, s::MOI.Integer)
     # Nothing to do
 end
 
-function loadconstraint!(o::PisingerKnapsackModel, ci, idxmap, f::MOI.SingleVariable, s::MOI.GreaterThan)
+function loadconstraint!(optimizer::PisingerKnapsackOptimizer, ci, idxmap, f::MOI.SingleVariable, s::MOI.GreaterThan)
     (s.lower != 0) && error("Variables lower bounds must be 0.")
     # Nothing more to do for now
 end
 
-function loadconstraint!(o::PisingerKnapsackModel, ci, idxmap, f::MOI.SingleVariable, s::MOI.LessThan)
-    varid = idxmap.varmap[f.variable].value
-    o.items_ub[varid] = s.upper
+function loadconstraint!(optimizer::PisingerKnapsackOptimizer, ci, idxmap, f::MOI.SingleVariable, s::MOI.LessThan)
+    ub = Integer(floor(s.upper))
+    (s.upper > ub) && error("Upper bound of variables must be integer.")
+    varid = getvarid(idxmap, f.variable)
+    setitemub!(optimizer.inner_model, varid, ub)
 end
 
-function loadconstraint!(o::PisingerKnapsackModel, ci, idxmap, f::MOI.ScalarAffineFunction{Float64}, s::MOI.LessThan)
+function loadconstraint!(optimizer::PisingerKnapsackOptimizer, ci, idxmap, f::MOI.ScalarAffineFunction{Float64}, s::MOI.LessThan)
     for term in f.terms
-        varid = idxmap.varmap[term.variable_index].value
-        o.weights[varid] = term.coefficient
+        weight = Integer(floor(term.coefficient))
+        (term.coefficient > weight) && error("Weight of items must be integer.")
+        varid = getvarid(idxmap, term.variable_index)
+        setweight!(optimizer.inner_model, varid, weight)
     end
 end
 
 function additems!(optimizer::PisingerKnapsackOptimizer, idxmap, vis_src)
     for (i, vi) in enumerate(vis_src)
-        idxmap.varmap[vi] = additem!(optimizer)
+        varid = additem!(optimizer.inner_model)
+        idxmap.varmap[vi] = MOI.VariableIndex(varid)
     end
-end
-
-function additem!(optimizer::PisingerKnapsackOptimizer)
-    optimizer.inner_model.nb_items += 1
-    id_var = optimizer.inner_model.nb_items
-    push!(optimizer.inner_model.profits, 0)
-    push!(optimizer.inner_model.weights, 0)
-    push!(optimizer.inner_model.items_ub, 1)
-    push!(optimizer.inner_model.items_lb, 0)
-    return MOI.VariableIndex(id_var)
 end
 
 function setprofits!(optimizer::PisingerKnapsackOptimizer, idxmap, f::MOI.ScalarAffineFunction)
     for term in f.terms
-        varid = idxmap.varmap[term.variable_index].value
-        optimizer.inner_model.profits[varid] += term.coefficient
+        varid = getvarid(idxmap, term.variable_index)
+        setprofit!(optimizer.inner_model, varid, term.coefficient)
     end
 end
