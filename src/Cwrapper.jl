@@ -12,9 +12,6 @@ macro pk_min_ccall(func, args...)
     args = map(esc, args)
     f = "$func"
     quote
-        println($(args...))
-        println($f)
-        println(PisingerKnapsack._jl_libminknap)
         ccall(($f, PisingerKnapsack._jl_libminknap), $(args...))
     end
 end

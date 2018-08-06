@@ -1,6 +1,4 @@
-# Solve the binary-constrained knapsack problem: max c'x: w'x <= C, x binary using Pisinger algorithms.
-
-#@testset "MOI wrapper" begin
+@testset "MOI wrapper" begin
 	c = [1, 2, 3]
 	w = [3.0, 5.0, 10.0]
 	C = 7.0
@@ -43,6 +41,6 @@
 	primal_variable_result = MOI.get(optimizer, MOI.VariablePrimal(), x)
 
 	@test termination_status == MOI.Success
-	@test objvalue == 6
-	@test primal_variable_result == [1.0, 1.0, 1.0]
-#end
+	@test objvalue == 2
+	@test primal_variable_result == [0.0, 1.0, 0.0]
+end
