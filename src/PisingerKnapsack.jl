@@ -16,6 +16,6 @@ include("doubleknp.jl")
 include("modelknp.jl")
 include("MOIwrapper.jl")
 
-export PisingerKnapsackSolver
+export PisingerKnapsackOptimizer
 
 end # module
