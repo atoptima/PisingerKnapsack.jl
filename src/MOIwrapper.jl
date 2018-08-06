@@ -30,6 +30,8 @@ function MOI.empty!(optimizer::PisingerKnapsackOptimizer)
     error("empty! TODO")
 end
 
+
+## TODO : for JuMP model
 # function MOI.copy!(optimizer::PisingerKnapsackOptimizer, src::MOI.ModelLike; copynames = false)
 #     idxmap = MOIU.IndexMap()
 
@@ -119,11 +121,9 @@ function MOI.addvariables!(optimizer::PisingerKnapsackOptimizer, n::Int)
     return [MOI.addvariable!(optimizer) for i in 1:n]
 end
 
-function MOI.canset(optimizer::PisingerKnapsackOptimizer, ::MOI.ObjectiveFunction{F}) where F <: MOI.ScalarAffineFunction{Float64}
-    return true
-end
+## Objective function
 
-function MOI.canset(optimizer::PisingerKnapsackOptimizer, ::MOI.ObjectiveFunction{F}) where F <: MOI.ScalarAffineFunction{Int64}
+function MOI.canset(optimizer::PisingerKnapsackOptimizer, ::MOI.ObjectiveFunction{F}) where F <: MOI.ScalarAffineFunction{Float64}
     return true
 end
 
@@ -133,6 +133,11 @@ function MOI.set!(optimizer::PisingerKnapsackOptimizer, ::MOI.ObjectiveFunction{
         setprofit!(optimizer.inner_model, varid, term.coefficient)
     end
 end
+
+function MOI.canset(optimizer::PisingerKnapsackOptimizer, ::MOI.ObjectiveFunction{F}) where F <: MOI.ScalarAffineFunction{Int64}
+    return true
+end
+
 
 function MOI.set!(optimizer::PisingerKnapsackOptimizer, ::MOI.ObjectiveFunction{F}, obj::F) where F <: MOI.ScalarAffineFunction{Int64}
     for term in obj.terms
@@ -148,6 +153,8 @@ function MOI.set!(optimizer::PisingerKnapsackOptimizer, ::MOI.ObjectiveSense, se
         error("PisingerKnapsackOptimizer supports only maximization.")
     end
 end
+
+## After the optimization : retrieve the solution, ...
 
 MOI.canget(optimizer::PisingerKnapsackOptimizer, ::MOI.TerminationStatus) = true
 function MOI.get(optimizer::PisingerKnapsackOptimizer, ::MOI.TerminationStatus)
