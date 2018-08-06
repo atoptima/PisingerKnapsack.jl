@@ -12,6 +12,9 @@ macro pk_min_ccall(func, args...)
     args = map(esc, args)
     f = "$func"
     quote
+        println($(args...))
+        println($f)
+        println(PisingerKnapsack._jl_libminknap)
         ccall(($f, PisingerKnapsack._jl_libminknap), $(args...))
     end
 end
@@ -25,7 +28,7 @@ macro pk_bou_ccall(func, args...)
 end
 
 # libbouknap functions
-function bouknap(p::Vector{Cint}, w::Vector{Cint}, ub::Vector{Cint}, capacity::Integer)
+function bouknap(p::Vector{Cint}, w::Vector{Cint}, ub::Vector{Cint}, capacity::Cint)
     nbitems = length(p)
     solution = fill(Cint(0), nbitems)
     obj = @pk_bou_ccall bouknap Clong (Cint, Ptr{Cint}, Ptr{Cint}, Ptr{Cint},
@@ -33,13 +36,12 @@ function bouknap(p::Vector{Cint}, w::Vector{Cint}, ub::Vector{Cint}, capacity::I
     return (obj, solution)
 end
 
-function bouknap(p::Vector{T}, w::Vector{T}, ub::Vector{T}, capacity::Integer) where T <: Integer
-    #warn("minknap: using Int64 instead of Cint.")
-    return bouknap(convert(Vector{Cint}, p), convert(Vector{Cint}, w), convert(Vector{Cint}, ub), capacity)
+function bouknap(p::Vector, w::Vector, ub::Vector, capacity)
+    return bouknap(convert(Vector{Cint}, p), convert(Vector{Cint}, w), convert(Vector{Cint}, ub), Cint(capacity))
 end
 
 # libminknap functions
-function minknap(p::Vector{Cint}, w::Vector{Cint}, capacity::Integer)
+function minknap(p::Vector{Cint}, w::Vector{Cint}, capacity::Cint)
     nbitems = length(p)
     solution = fill(Cint(0), nbitems)
     obj = @pk_min_ccall minknap Clong (Cint, Ptr{Cint}, Ptr{Cint}, Ptr{Cint},
@@ -47,9 +49,8 @@ function minknap(p::Vector{Cint}, w::Vector{Cint}, capacity::Integer)
     return (obj, solution)
 end
 
-function minknap(p::Vector{T}, w::Vector{T}, capacity::Integer) where T <: Integer
-    #warn("minknap: using Int64 instead of Cint.")
-    return minknap(convert(Vector{Cint}, p), convert(Vector{Cint}, w), capacity)
+function minknap(p::Vector, w::Vector, capacity)
+    return minknap(convert(Vector{Cint}, p), convert(Vector{Cint}, w), Cint(capacity))
 end
 
 end
