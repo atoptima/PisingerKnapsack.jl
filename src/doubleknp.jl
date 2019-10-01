@@ -2,7 +2,7 @@ using PisingerKnapsack.PisingerKnapsackCInterface
 
 const PKCI = PisingerKnapsackCInterface
 
-export doubleminknap
+export doubleminknap, doubleminmcknap
 
 function rfloor(val::Double)::Integer
     rf_val = Integer(floor(val + val * 1e-10 + 1e-6))
@@ -26,6 +26,13 @@ end
 function doubleminknap(p::Vector{Double}, w::Vector{T}, capacity::Integer) where T <: Integer
     int_p = scale_vector_of_double(p)
     (obj, sol) = PKCI.minknap(int_p, w, capacity)
+    real_obj = sum(sol[i] * p[i] for i in 1:length(sol))
+    return (real_obj, sol)
+end
+
+function doubleminmcknap(p::Vector{Double}, w::Vector{T}, capacity::Integer, items_per_class::Vector{T}) where T <: Integer
+    int_p = scale_vector_of_double(p)
+    (obj, sol) = PKCI.minmcknap(int_p, w, capacity, items_per_class)
     real_obj = sum(sol[i] * p[i] for i in 1:length(sol))
     return (real_obj, sol)
 end

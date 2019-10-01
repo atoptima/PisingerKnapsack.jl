@@ -5,7 +5,8 @@ const Double = Float64
 import ..PisingerKnapsack
 
 export bouknap,
-       minknap
+       minknap,
+       minmcknap
 
 # helper macros/functions
 macro pk_min_ccall(func, args...)
@@ -21,6 +22,14 @@ macro pk_bou_ccall(func, args...)
     f = "$func"
     quote
         ccall(($f, PisingerKnapsack._jl_libbouknap), $(args...))
+    end
+end
+
+macro pk_minmc_ccall(func, args...)
+    args = map(esc, args)
+    f = "$func"
+    quote
+        ccall(($f, PisingerKnapsack._jl_libminmcknap), $(args...))
     end
 end
 
@@ -50,4 +59,17 @@ function minknap(p::Vector, w::Vector, capacity)
     return minknap(convert(Vector{Cint}, p), convert(Vector{Cint}, w), Cint(capacity))
 end
 
+# libminmcknap functions
+function minmcknap(p::Vector{Cint}, w::Vector{Cint}, capacity::Cint, items_per_class::Vector{Cint})
+    nbitems = length(p)
+    nbclasses = length(items_per_class)
+    solution = fill(Cint(0), nbitems)
+    obj = @pk_minmc_ccall minmcknap Clong (Cint, Cint, Ptr{Cint}, Ptr{Cint}, 
+        Ptr{Cint}, Ptr{Cint}, Cint) nbitems nbclasses items_per_class p w solution capacity
+    return (obj, solution)
+end
+
+function minmcknap(p::Vector, w::Vector, capacity, items_per_class::Vector)
+    return minmcknap(convert(Vector{Cint}, p), convert(Vector{Cint}, w), Cint(capacity), convert(Vector{Cint}, items_per_class))
+end
 end

@@ -1,0 +1,7 @@
+name = "PisingerKnapsack"
+uuid = "5901d154-f6b5-4643-ae7a-39a3d11e2853"
+authors = ["Guillaume Marques <guillaume.marques@protonmail.com>"]
+version = "0.1.0"
+
+[deps]
+Test = "8dfed614-e22c-5e08-85e1-65c5234f0b40"
