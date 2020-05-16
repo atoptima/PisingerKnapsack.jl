@@ -18,7 +18,7 @@ lib_bouknap_build = joinpath(lib_pisinger_bouknap, "build")
 
 provides(SimpleBuild,
     (@build_steps begin
-        FileDownloader("$pisinger_webpage_uri/bouknap.c", "$lib_pisinger_bouknap/bouknap.c")
+        FileDownloader("$pisinger_webpage_uri/bouknap.c", joinpath(lib_pisinger_bouknap, "bouknap.c"))
         if Sys.isapple() # Removing deprecated headers for osx
             @build_steps begin
                 `sed -i '' '/values\.h/d' $lib_pisinger_bouknap/bouknap.c`
@@ -35,7 +35,7 @@ provides(SimpleBuild,
 
 provides(SimpleBuild,
     (@build_steps begin
-        FileDownloader("$pisinger_webpage_uri/minknap.c", "$lib_pisinger_minknap/minknap.c")
+        FileDownloader("$pisinger_webpage_uri/minknap.c", joinpath(lib_pisinger_minknap, "minknap.c"))
         if Sys.isapple() # Removing deprecated headers for osx
             @build_steps begin
                 `sed -i '' '/values\.h/d' $lib_pisinger_minknap/minknap.c`
