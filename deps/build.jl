@@ -50,9 +50,9 @@ provides(SimpleBuild,
         end
     end), libminknap, installed_libpath = lib_minknap_build)
 
-@windows_only push!(BinDeps.defaults, BuildProcess)
+Sys.iswindows() && push!(BinDeps.defaults, BuildProcess)
 
 @BinDeps.install Dict(:libbouknap => :_jl_libbouknap,
                       :libminknap => :_jl_libminknap)
 
-@windows_only pop!(BinDeps.defaults)
+Sys.iswindows() && pop!(BinDeps.defaults)
