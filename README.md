@@ -1,5 +1,7 @@
+# PisingerKnapsack.jl
 
-# PisingerKnapsack
+
+[![Build Status](https://travis-ci.org/atoptima/PisingerKnapsack.jl.svg?branch=master)](https://travis-ci.org/atoptima/PisingerKnapsack.jl)
 
 Please note that **Pisinger's algorithms may be used for academic, non-commercial purposes only.**
 
@@ -22,7 +24,7 @@ in which the value of the i*th* entry is the number the i*th* item is in the kna
 - [Minknap algorithm](http://hjemmesider.diku.dk/~pisinger/minknap.c)
 
 ```julia
-    obj, sol = minknap(costs::Vector{Real}, weights::Vector{Real}, capacity::Real)
+    obj, sol = minknap(costs::Vector, weights::Vector, capacity::Real)
 ```
 
 - [Bouknap algorithm](http://hjemmesider.diku.dk/~pisinger/bouknap.c)

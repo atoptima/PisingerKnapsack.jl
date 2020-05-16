@@ -2,6 +2,8 @@ __precompile__()
 
 module PisingerKnapsack
 
+export bouknap, minknap
+
 const deps_file = joinpath(dirname(@__FILE__), "..", "deps", "deps.jl")
 if isfile(deps_file)
     include(deps_file)
