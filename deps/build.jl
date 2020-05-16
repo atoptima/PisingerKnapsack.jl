@@ -9,12 +9,12 @@ libminknap = library_dependency("libminknap")
 
 pisinger_webpage_uri = "http://hjemmesider.diku.dk/~pisinger"
 
-pisinger_files_root = "$path/../libpisinger"
-lib_pisinger_root = "$path/libpisinger"
-lib_pisinger_minknap= "$lib_pisinger_root/minknap"
-lib_minknap_build = "$lib_pisinger_minknap/build"
-lib_pisinger_bouknap = "$lib_pisinger_root/bouknap"
-lib_bouknap_build = "$lib_pisinger_bouknap/build"
+pisinger_files_root = joinpath(path, "..", "libpisinger")
+lib_pisinger_root = joinpath(path, "libpisinger")
+lib_pisinger_minknap= joinpath(lib_pisinger_root, "minknap")
+lib_minknap_build = joinpath(lib_pisinger_root, "build")
+lib_pisinger_bouknap = joinpath(lib_pisinger_root, "bouknap")
+lib_bouknap_build = joinpath(lib_pisinger_root, "build")
 
 # Copy extra source code in deps folder
 run(`cp -r $pisinger_files_root .`)
