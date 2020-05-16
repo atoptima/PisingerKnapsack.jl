@@ -1,9 +1,3 @@
-using PisingerKnapsack.PisingerKnapsackCInterface
-
-const PKCI = PisingerKnapsackCInterface
-
-export doubleminknap, doubleminmcknap
-
 function rfloor(val::Float64)::Integer
     rf_val = Integer(floor(val + val * 1e-10 + 1e-6))
     if (rf_val < val - 1 + 1e-6)
@@ -23,16 +17,16 @@ function scale_vector_of_double(v::Vector{Float64})
     return int_v
 end
 
-function doubleminknap(p::Vector{Float64}, w::Vector{T}, capacity::Integer) where T <: Integer
+function minknap(p::Vector{Float64}, w::Vector{T}, capacity::Integer) where T <: Integer
     int_p = scale_vector_of_double(p)
-    (obj, sol) = PKCI.minknap(int_p, w, capacity)
+    (obj, sol) = minknap(int_p, w, capacity)
     real_obj = sum(sol[i] * p[i] for i in 1:length(sol))
     return (real_obj, sol)
 end
 
-function doubleminmcknap(p::Vector{Float64}, w::Vector{T}, capacity::Integer, items_per_class::Vector{T}) where T <: Integer
+function minmcknap(p::Vector{Float64}, w::Vector{T}, capacity::Integer, items_per_class::Vector{T}) where T <: Integer
     int_p = scale_vector_of_double(p)
-    (obj, sol) = PKCI.minmcknap(int_p, w, capacity, items_per_class)
+    (obj, sol) = minmcknap(int_p, w, capacity, items_per_class)
     real_obj = sum(sol[i] * p[i] for i in 1:length(sol))
     return (real_obj, sol)
 end
