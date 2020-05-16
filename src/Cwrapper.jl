@@ -1,7 +1,5 @@
 module PisingerKnapsackCInterface
 
-const Double = Float64
-
 import ..PisingerKnapsack
 
 export bouknap,
