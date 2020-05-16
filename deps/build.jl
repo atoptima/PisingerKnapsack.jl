@@ -34,7 +34,7 @@ provides(SimpleBuild,
             `cmake ..`
             `make`
         end
-    end), libbouknap)
+    end), libbouknap, installed_libpath = lib_bouknap_build)
 
 provides(SimpleBuild,
     (@build_steps begin
@@ -51,7 +51,7 @@ provides(SimpleBuild,
             `cmake ..`
             `make`
         end
-    end), libminknap)
+    end), libminknap, installed_libpath = lib_minknap_build)
 
 @BinDeps.install Dict(:libbouknap => :_jl_libbouknap,
                       :libminknap => :_jl_libminknap)
