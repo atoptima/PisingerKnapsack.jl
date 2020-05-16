@@ -17,14 +17,14 @@ function scale_vector_of_double(v::Vector{Float64})
     return int_v
 end
 
-function minknap(p::Vector{Float64}, w::Vector{T}, capacity::Integer) where T <: Integer
+function minknap(p::Vector{Float64}, w::Vector{T}, capacity::T) where T <: Integer
     int_p = scale_vector_of_double(p)
     (obj, sol) = minknap(int_p, w, capacity)
     real_obj = sum(sol[i] * p[i] for i in 1:length(sol))
     return (real_obj, sol)
 end
 
-function minmcknap(p::Vector{Float64}, w::Vector{T}, capacity::Integer, items_per_class::Vector{T}) where T <: Integer
+function minmcknap(p::Vector{Float64}, w::Vector{T}, capacity::T, items_per_class::Vector{T}) where T <: Integer
     int_p = scale_vector_of_double(p)
     (obj, sol) = minmcknap(int_p, w, capacity, items_per_class)
     real_obj = sum(sol[i] * p[i] for i in 1:length(sol))
