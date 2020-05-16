@@ -16,9 +16,6 @@ lib_minknap_build = joinpath(lib_pisinger_minknap, "build")
 lib_pisinger_bouknap = joinpath(lib_pisinger_root, "bouknap")
 lib_bouknap_build = joinpath(lib_pisinger_bouknap, "build")
 
-# Copy extra source code in deps folder
-run(`cp -r $pisinger_files_root .`)
-
 provides(SimpleBuild,
     (@build_steps begin
         FileDownloader("$pisinger_webpage_uri/bouknap.c", "$lib_pisinger_bouknap/bouknap.c")
