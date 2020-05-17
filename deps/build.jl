@@ -4,8 +4,8 @@ using BinDeps
 
 path = dirname(@__FILE__)
 
-libbouknap = library_dependency("libbouknap")
-libminknap = library_dependency("libminknap")
+libbouknap = library_dependency("libbouknap", aliases = [joinpath("x86","libbouknap"), joinpath("x64","libbouknap")])
+libminknap = library_dependency("libminknap", aliases = [joinpath("x86","libminknap"), joinpath("x64","libminknap")])
 
 pisinger_webpage_uri = "http://hjemmesider.diku.dk/~pisinger"
 
@@ -29,7 +29,7 @@ if Sys.iswindows()
             CreateDirectory(lib_bouknap_build)
             @build_steps begin
                 ChangeDirectory(lib_bouknap_build)
-                `cmake --build . --config Release ..`
+                `cmake .. --config Release`
                 `MSBuild bouknap.vcxproj`
                 `ls`
             end
@@ -42,7 +42,7 @@ if Sys.iswindows()
             CreateDirectory(lib_minknap_build)
             @build_steps begin
                 ChangeDirectory(lib_minknap_build)
-                `cmake --build . --config Release ..`
+                `cmake .. --config Release`
                 `MSBuild minknap.vcxproj`
                 `ls`
             end
