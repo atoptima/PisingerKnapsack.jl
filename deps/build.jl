@@ -29,9 +29,9 @@ if Sys.iswindows()
         CreateDirectory(lib_bouknap_build)
         @build_steps begin
             ChangeDirectory(lib_bouknap_build)
-            `cmake ..`
+            `cmake cmake --build . --config Release ..`
+            `MSBuild bouknap.vcxproj`
             `ls`
-            `cat bouknap.vcxproj`
         end
     end), libbouknap, os=:Windows)
 
@@ -42,9 +42,8 @@ if Sys.iswindows()
             CreateDirectory(lib_minknap_build)
             @build_steps begin
                 ChangeDirectory(lib_minknap_build)
-                `cmake ..`
-                `ls`
-                `MSBuild bouknap.vcxproj`
+                `cmake cmake --build . --config Release ..`
+                `MSBuild minknap.vcxproj`
                 `ls`
             end
         end), libminknap, os=:Windows)
