@@ -35,7 +35,7 @@ if Sys.iswindows()
         end
     end), libbouknap, os=:Windows)
 
-    minknapfile = joinpath(lib_pisinger_minkap, "minknap.c")
+    minknapfile = joinpath(lib_pisinger_minknap, "minknap.c")
     provides(SimpleBuild,
         (@build_steps begin
             FileDownloader("$pisinger_webpage_uri/minknap.c", minknapfile)
