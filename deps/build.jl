@@ -23,8 +23,10 @@ if Sys.iswindows()
     provides(SimpleBuild,
     (@build_steps begin
         FileDownloader("$pisinger_webpage_uri/bouknap.c", bouknapfile)
-            `cat $bouknapfile \| '%{$_ -replace "#include <values.h>", "" }' \> $bouknapfile`
-            `cat $bouknapfile \| '%{$_ -replace "#include <malloc.h>", "" }' \> $bouknapfile`
+            cmd1 = "cat $bouknapfile | %{\$_ -replace \"#include <values.h>\", \"\" } > $bouknapfile"
+            cmd2 = "cat $bouknapfile | %{\$_ -replace \"#include <malloc.h>\", \"\" } > $bouknapfile"
+            `$cmd1`
+            `$cmd2`
         CreateDirectory(lib_bouknap_build)
         @build_steps begin
             ChangeDirectory(lib_bouknap_build)
