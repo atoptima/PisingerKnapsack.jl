@@ -19,14 +19,13 @@ lib_bouknap_build = joinpath(lib_pisinger_bouknap, "build")
 if Sys.iswindows()
     println("Build for windows.")
      
-    editfile(filename, header) = "cat $filename | %{\$_ -replace \"#include <$header.h>\", \"\" } > $filename"
+    ### Files edites for windows 
+    pisinger_webpage_uri = "https://raw.githubusercontent.com/guimarqu/guimarqu.github.io/master/codes/"
 
     bouknapfile = joinpath(lib_pisinger_bouknap, "bouknap.c")
     provides(SimpleBuild,
     (@build_steps begin
         FileDownloader("$pisinger_webpage_uri/bouknap.c", bouknapfile)
-            `$(editfile(bouknapfile, "values"))`
-            `$(editfile(bouknapfile, "malloc"))`
         CreateDirectory(lib_bouknap_build)
         @build_steps begin
             ChangeDirectory(lib_bouknap_build)
@@ -41,8 +40,6 @@ if Sys.iswindows()
     provides(SimpleBuild,
         (@build_steps begin
             FileDownloader("$pisinger_webpage_uri/minknap.c", minknapfile)
-            `cat $minknapfile \| '%{$_ -replace "#include <values.h>", "" }' \> $minknapfile`
-            `cat $minknapfile \| '%{$_ -replace "#include <malloc.h>", "" }' \> $minknapfile`
             CreateDirectory(lib_minknap_build)
             @build_steps begin
                 ChangeDirectory(lib_minknap_build)
