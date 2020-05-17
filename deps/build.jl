@@ -17,11 +17,12 @@ lib_pisinger_bouknap = joinpath(lib_pisinger_root, "bouknap")
 lib_bouknap_build = joinpath(lib_pisinger_bouknap, "build")
 
 if Sys.iswindows()
+    println("Build for windows.")
     using WinRPM
-    WinRPM.install("gcc", yes=true)
-    GCCROOT = joinpath(Pkg.dir("WinRPM"), "deps")
+    println("Installing gcc.")
+    WinRPM.install("gcc")
 
-
+    println("Downloading cmake.")
 	makedeplnk = "https://sourceforge.net/projects/gnuwin32/files/make/3.81/make-3.81-dep.zip/download"
 	makebinlnk = "https://sourceforge.net/projects/gnuwin32/files/make/3.81/make-3.81-bin.zip/download"
 
@@ -30,8 +31,8 @@ if Sys.iswindows()
 	makebuilddir = joinpath(pisinger_files_root,  "make")
 
     make = joinpath(makebuilddir, "bin", "make.exe")
-    icnv = joinpath(makebuilddir, "bin", "libiconv2.dll"),
-	intl = joinpath(makebuilddir, "bin", "libintl3.dll"),
+    icnv = joinpath(makebuilddir, "bin", "libiconv2.dll")
+	intl = joinpath(makebuilddir, "bin", "libintl3.dll")
        
     provides(SimpleBuild,
     (@build_steps begin
@@ -60,6 +61,7 @@ if Sys.iswindows()
             end
         end), libminknap, os=:Windows)
 else
+    println("Build not for windows.")
     provides(SimpleBuild,
         (@build_steps begin
             FileDownloader("$pisinger_webpage_uri/bouknap.c", joinpath(lib_pisinger_bouknap, "bouknap.c"))
