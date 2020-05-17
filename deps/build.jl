@@ -22,8 +22,8 @@ if Sys.iswindows()
     provides(SimpleBuild,
     (@build_steps begin
         FileDownloader("$pisinger_webpage_uri/bouknap.c", joinpath(lib_pisinger_bouknap, "bouknap.c"))
-        `Get-Content $lib_pisinger_bouknap/bouknap.c | %{$_ -replace "#include <values.h>", ""} | Set-Content $lib_pisinger_bouknap/bouknap.c`
-        `Get-Content $lib_pisinger_bouknap/bouknap.c | %{$_ -replace "#include <malloc.h>", ""} | Set-Content $lib_pisinger_bouknap/bouknap.c`
+        `Get-Content $lib_pisinger_bouknap/bouknap.c | %{$_ -replace "\#include \<values\.h\>", ""} | Set-Content $lib_pisinger_bouknap/bouknap.c`
+        `Get-Content $lib_pisinger_bouknap/bouknap.c | %{$_ -replace "\#include \<malloc\.h\>", ""} | Set-Content $lib_pisinger_bouknap/bouknap.c`
         CreateDirectory(lib_bouknap_build)
         @build_steps begin
             ChangeDirectory(lib_bouknap_build)
@@ -37,8 +37,8 @@ if Sys.iswindows()
     provides(SimpleBuild,
         (@build_steps begin
             FileDownloader("$pisinger_webpage_uri/minknap.c", joinpath(lib_pisinger_minknap, "minknap.c"))
-            `Get-Content $lib_pisinger_bouknap/minknap.c | %{$_ -replace "#include <values.h>", ""} | Set-Content $lib_pisinger_bouknap/minknap.c`
-            `Get-Content $lib_pisinger_bouknap/minknap.c | %{$_ -replace "#include <malloc.h>", ""} | Set-Content $lib_pisinger_bouknap/minknap.c`
+            `Get-Content $lib_pisinger_bouknap/minknap.c | %{$_ -replace "\#include \<values\.h\>", ""} | Set-Content $lib_pisinger_bouknap/minknap.c`
+            `Get-Content $lib_pisinger_bouknap/minknap.c | %{$_ -replace "\#include \<malloc\.h\>", ""} | Set-Content $lib_pisinger_bouknap/minknap.c`
             CreateDirectory(lib_minknap_build)
             @build_steps begin
                 ChangeDirectory(lib_minknap_build)
