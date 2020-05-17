@@ -19,11 +19,12 @@ lib_bouknap_build = joinpath(lib_pisinger_bouknap, "build")
 if Sys.iswindows()
     println("Build for windows.")
      
+    bouknapfile = joinpath(lib_pisinger_bouknap, "bouknap.c")
     provides(SimpleBuild,
     (@build_steps begin
-        FileDownloader("$pisinger_webpage_uri/bouknap.c", joinpath(lib_pisinger_bouknap, "bouknap.c"))
-        `Get-Content $lib_pisinger_bouknap/bouknap.c | %{$_ -replace "\#include \<values\.h\>", ""} | Set-Content $lib_pisinger_bouknap/bouknap.c`
-        `Get-Content $lib_pisinger_bouknap/bouknap.c | %{$_ -replace "\#include \<malloc\.h\>", ""} | Set-Content $lib_pisinger_bouknap/bouknap.c`
+        FileDownloader("$pisinger_webpage_uri/bouknap.c", bouknapfile)
+            `cat $bouknapfile "|" %"{"\$_ -replace "\"#include <values.h>\"", \"\" "}" ">" $bouknapfile`
+            `cat $bouknapfile "|" %"{"\$_ -replace "\"#include <malloc.h>\"", \"\" "}" ">" $bouknapfile`
         CreateDirectory(lib_bouknap_build)
         @build_steps begin
             ChangeDirectory(lib_bouknap_build)
@@ -34,11 +35,12 @@ if Sys.iswindows()
         end
     end), libbouknap, os=:Windows)
 
+    minknapfile = joinpath(lib_pisinger_minkap, "minknap.c")
     provides(SimpleBuild,
         (@build_steps begin
-            FileDownloader("$pisinger_webpage_uri/minknap.c", joinpath(lib_pisinger_minknap, "minknap.c"))
-            `Get-Content $lib_pisinger_bouknap/minknap.c | %{$_ -replace "\#include \<values\.h\>", ""} | Set-Content $lib_pisinger_bouknap/minknap.c`
-            `Get-Content $lib_pisinger_bouknap/minknap.c | %{$_ -replace "\#include \<malloc\.h\>", ""} | Set-Content $lib_pisinger_bouknap/minknap.c`
+            FileDownloader("$pisinger_webpage_uri/minknap.c", minknapfile)
+            `cat $minknapfile "|" %"{"\$_ -replace "\"#include <values.h>\"", \"\" "}" ">" $minknapfile`
+            `cat $minknapfile "|" %"{"\$_ -replace "\"#include <malloc.h>\"", \"\" "}" ">" $minknapfile`
             CreateDirectory(lib_minknap_build)
             @build_steps begin
                 ChangeDirectory(lib_minknap_build)
