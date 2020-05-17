@@ -29,7 +29,7 @@ provides(SimpleBuild,
         @build_steps begin
             ChangeDirectory(lib_bouknap_build)
             `cmake ..`
-            `make`
+            MakeTargets()
         end
     end), libbouknap, installed_libpath = lib_bouknap_build)
 
@@ -46,7 +46,7 @@ provides(SimpleBuild,
         @build_steps begin
             ChangeDirectory(lib_minknap_build)
             `cmake ..`
-            `make`
+            MakeTargets()
         end
     end), libminknap, installed_libpath = lib_minknap_build)
 
