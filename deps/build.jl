@@ -18,11 +18,8 @@ lib_bouknap_build = joinpath(lib_pisinger_bouknap, "build")
 
 if Sys.iswindows()
     println("Build for windows.")
-    using WinRPM
-    println("Installing gcc.")
-    WinRPM.install("gcc")
 
-    println("Downloading cmake.")
+    println("Downloading make.")
 	makedeplnk = "https://sourceforge.net/projects/gnuwin32/files/make/3.81/make-3.81-dep.zip/download"
 	makebinlnk = "https://sourceforge.net/projects/gnuwin32/files/make/3.81/make-3.81-bin.zip/download"
 
@@ -45,7 +42,8 @@ if Sys.iswindows()
         @build_steps begin
             ChangeDirectory(lib_bouknap_build)
             `cmake ..`
-            `$make`
+            `ls`
+            `$make ARCH=$(Sys.ARCH)`
         end
     end), libbouknap, os=:Windows)
 
@@ -56,7 +54,8 @@ if Sys.iswindows()
             @build_steps begin
                 ChangeDirectory(lib_minknap_build)
                 `cmake ..`
-                `$make`
+                `ls`
+                `$make ARCH=$(Sys.ARCH)`
                 MakeTargets()
             end
         end), libminknap, os=:Windows)
