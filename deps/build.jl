@@ -27,9 +27,10 @@ if Sys.iswindows()
         (@build_steps begin
             FileDownloader("$pisinger_webpage_uri/bouknap.c", bouknapfile)
             CreateDirectory(lib_bouknap_build)
+            `cmake --build $lib_bouknap_build --config Release`
             @build_steps begin
                 ChangeDirectory(lib_bouknap_build)
-                `cmake .. --config Release`
+                `ls`
                 `MSBuild bouknap.vcxproj`
                 `ls`
             end
@@ -40,9 +41,10 @@ if Sys.iswindows()
         (@build_steps begin
             FileDownloader("$pisinger_webpage_uri/minknap.c", minknapfile)
             CreateDirectory(lib_minknap_build)
+            `cmake --build $lib_minknap_build --config Release`
             @build_steps begin
                 ChangeDirectory(lib_minknap_build)
-                `cmake .. --config Release`
+                `ls`
                 `MSBuild minknap.vcxproj`
                 `ls`
             end
