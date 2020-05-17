@@ -24,16 +24,16 @@ if Sys.iswindows()
 
     bouknapfile = joinpath(lib_pisinger_bouknap, "bouknap.c")
     provides(SimpleBuild,
-    (@build_steps begin
-        FileDownloader("$pisinger_webpage_uri/bouknap.c", bouknapfile)
-        CreateDirectory(lib_bouknap_build)
-        @build_steps begin
-            ChangeDirectory(lib_bouknap_build)
-            `cmake cmake --build . --config Release ..`
-            `MSBuild bouknap.vcxproj`
-            `ls`
-        end
-    end), libbouknap, os=:Windows)
+        (@build_steps begin
+            FileDownloader("$pisinger_webpage_uri/bouknap.c", bouknapfile)
+            CreateDirectory(lib_bouknap_build)
+            @build_steps begin
+                ChangeDirectory(lib_bouknap_build)
+                `cmake --build . --config Release ..`
+                `MSBuild bouknap.vcxproj`
+                `ls`
+            end
+        end), libbouknap, os=:Windows)
 
     minknapfile = joinpath(lib_pisinger_minknap, "minknap.c")
     provides(SimpleBuild,
@@ -42,7 +42,7 @@ if Sys.iswindows()
             CreateDirectory(lib_minknap_build)
             @build_steps begin
                 ChangeDirectory(lib_minknap_build)
-                `cmake cmake --build . --config Release ..`
+                `cmake --build . --config Release ..`
                 `MSBuild minknap.vcxproj`
                 `ls`
             end
