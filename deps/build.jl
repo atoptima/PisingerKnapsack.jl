@@ -30,9 +30,7 @@ if Sys.iswindows()
         @build_steps begin
             ChangeDirectory(lib_bouknap_build)
             `cmake ..`
-            `ls`
-            `MSBuild bouknap.vcxproj`
-            `ls`
+            `cat bouknap.vcxproj`
         end
     end), libbouknap, os=:Windows)
 
