@@ -23,8 +23,8 @@ if Sys.iswindows()
     provides(SimpleBuild,
     (@build_steps begin
         FileDownloader("$pisinger_webpage_uri/bouknap.c", bouknapfile)
-            `cat $bouknapfile "|" %"{"\$_ -replace "\"#include <values.h>\"", \"\" "}" ">" $bouknapfile`
-            `cat $bouknapfile "|" %"{"\$_ -replace "\"#include <malloc.h>\"", \"\" "}" ">" $bouknapfile`
+            `cat $bouknapfile | %{\$_ -replace \"#include <values.h>\", \"\" } > $bouknapfile`
+            `cat $bouknapfile | %{\$_ -replace \"#include <malloc.h>\", \"\" } > $bouknapfile`
         CreateDirectory(lib_bouknap_build)
         @build_steps begin
             ChangeDirectory(lib_bouknap_build)
@@ -39,8 +39,8 @@ if Sys.iswindows()
     provides(SimpleBuild,
         (@build_steps begin
             FileDownloader("$pisinger_webpage_uri/minknap.c", minknapfile)
-            `cat $minknapfile "|" %"{"\$_ -replace "\"#include <values.h>\"", \"\" "}" ">" $minknapfile`
-            `cat $minknapfile "|" %"{"\$_ -replace "\"#include <malloc.h>\"", \"\" "}" ">" $minknapfile`
+            `cat $minknapfile | %{\$_ -replace \"#include <values.h>\", \"\" } > $minknapfile`
+            `cat $minknapfile | %{\$_ -replace \"#include <malloc.h>\", \"\" } > $minknapfile`
             CreateDirectory(lib_minknap_build)
             @build_steps begin
                 ChangeDirectory(lib_minknap_build)
