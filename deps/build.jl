@@ -18,32 +18,17 @@ lib_bouknap_build = joinpath(lib_pisinger_bouknap, "build")
 
 if Sys.iswindows()
     println("Build for windows.")
-
-    println("Downloading make.")
-	makedeplnk = "https://sourceforge.net/projects/gnuwin32/files/make/3.81/make-3.81-dep.zip/download"
-	makebinlnk = "https://sourceforge.net/projects/gnuwin32/files/make/3.81/make-3.81-bin.zip/download"
-
-	makedepzip 	= joinpath(pisinger_files_root, "make-3.81-dep.zip")
-	makebinzip   = joinpath(pisinger_files_root, "make-3.81-bin.zip")
-	makebuilddir = joinpath(pisinger_files_root,  "make")
-
-    make = joinpath(makebuilddir, "bin", "make.exe")
-    icnv = joinpath(makebuilddir, "bin", "libiconv2.dll")
-	intl = joinpath(makebuilddir, "bin", "libintl3.dll")
-       
+     
     provides(SimpleBuild,
     (@build_steps begin
-        FileDownloader(makedeplnk, makedepzip)
-        FileDownloader(makebinlnk, makebinzip)
-        FileUnpacker(makedepzip, makebuilddir, joinpath("bin", "libiconv2.dll"))
-        FileUnpacker(makebinzip, makebuilddir, joinpath("bin", "make.exe"))
         FileDownloader("$pisinger_webpage_uri/bouknap.c", joinpath(lib_pisinger_bouknap, "bouknap.c"))
         CreateDirectory(lib_bouknap_build)
         @build_steps begin
             ChangeDirectory(lib_bouknap_build)
             `cmake ..`
             `ls`
-            `$make ARCH=$(Sys.ARCH)`
+            `MSBuild bouknap.vcxproj`
+            `ls`
         end
     end), libbouknap, os=:Windows)
 
@@ -55,8 +40,8 @@ if Sys.iswindows()
                 ChangeDirectory(lib_minknap_build)
                 `cmake ..`
                 `ls`
-                `$make ARCH=$(Sys.ARCH)`
-                MakeTargets()
+                `MSBuild bouknap.vcxproj`
+                `ls`
             end
         end), libminknap, os=:Windows)
 else
