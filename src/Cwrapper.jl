@@ -10,8 +10,8 @@ end
 function minknap(p::Vector{Cint}, w::Vector{Cint}, capacity::Cint)
     nbitems = length(p)
     solution = fill(Cint(0), nbitems)
-    obj = @pk_min_ccall minknap Clong (Cint, Ptr{Cint}, Ptr{Cint}, Ptr{Cint},
-            Cint) nbitems p w solution capacity
+    obj =
+        @pk_min_ccall minknap Clong (Cint, Ptr{Cint}, Ptr{Cint}, Ptr{Cint}, Cint) nbitems p w solution capacity
     return (obj, solution)
 end
 
@@ -31,13 +31,44 @@ end
 function bouknap(p::Vector{Cint}, w::Vector{Cint}, ub::Vector{Cint}, capacity::Cint)
     nbitems = length(p)
     solution = fill(Cint(0), nbitems)
-    obj = @pk_bou_ccall bouknap Clong (Cint, Ptr{Cint}, Ptr{Cint}, Ptr{Cint},
-            Ptr{Cint}, Cint) nbitems p w ub solution capacity
+    obj =
+        @pk_bou_ccall bouknap Clong (Cint, Ptr{Cint}, Ptr{Cint}, Ptr{Cint}, Ptr{Cint}, Cint) nbitems p w ub solution capacity
     return (obj, solution)
 end
 
 function bouknap(p::Vector, w::Vector, ub::Vector, capacity)
-    return bouknap(convert(Vector{Cint}, p), convert(Vector{Cint}, w), convert(Vector{Cint}, ub), Cint(capacity))
+    return bouknap(
+        convert(Vector{Cint}, p),
+        convert(Vector{Cint}, w),
+        convert(Vector{Cint}, ub),
+        Cint(capacity),
+    )
+end
+
+# libmulknap methods
+macro pk_mul_ccall(func, args...)
+    args = map(esc, args)
+    f = "$func"
+    quote
+        ccall(($f, PisingerKnapsack._jl_libmulknap), $(args...))
+    end
+end
+
+function mulknap(p::Vector{Cint}, w::Vector{Cint}, capacities::Vector{Cint})
+    nbitems = length(p)
+    nbknapsacks = length(capacities)
+    solution = fill(Cint(0), nbitems)
+    obj =
+        @pk_mul_ccall mulknap Clong (Cint, Cint, Ptr{Cint}, Ptr{Cint}, Ptr{Cint}, Ptr{Cint}) nbitems nbknapsacks p w solution capacities
+    return (obj, solution)
+end
+
+function mulknap(p::Vector, w::Vector, capacities::Vector)
+    return mulknap(
+        convert(Vector{Cint}, p),
+        convert(Vector{Cint}, w),
+        convert(Vector{Cint}, capacities),
+    )
 end
 
 # FYI : mcknap function generates random instances so we cannot use as provided by Pisinger
@@ -55,7 +86,7 @@ end
 #     nbitems = length(p)
 #     nbclasses = length(items_per_class)
 #     solution = fill(Cint(0), nbitems)
-#     obj = @pk_minmc_ccall minmcknap Clong (Cint, Cint, Ptr{Cint}, Ptr{Cint}, 
+#     obj = @pk_minmc_ccall minmcknap Clong (Cint, Cint, Ptr{Cint}, Ptr{Cint},
 #         Ptr{Cint}, Ptr{Cint}, Cint) nbitems nbclasses items_per_class p w solution capacity
 #     return (obj, solution)
 # end

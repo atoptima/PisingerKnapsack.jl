@@ -18,4 +18,10 @@
     (z, s) = bouknap(profits, weights, ubitems, capacity)
     @test z == 17
     @test s == [0, 0, 0, 0, 1, 2]
+
+    capacities = [5, 15]
+
+    (z, s) = mulknap(profits, weights, capacities)
+    @test z == 18
+    @test s == [0, 0, 2, 2, 2, 1]
 end

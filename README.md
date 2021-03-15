@@ -2,7 +2,7 @@
 
 Linux & MacOS
 [![Build Status](https://travis-ci.org/atoptima/PisingerKnapsack.jl.svg?branch=master)](https://travis-ci.org/atoptima/PisingerKnapsack.jl)
--- Windows 
+-- Windows
 [![Build status](https://ci.appveyor.com/api/projects/status/u99j9jm866xarfyp?svg=true)](https://ci.appveyor.com/project/guimarqu/pisingerknapsack-jl)
 
 
@@ -36,8 +36,14 @@ in which the value of the i*th* entry is the number the i*th* item is in the kna
     obj, sol = bouknap(costs::Vector, weights::Vector, itemub::Vector, capacity::Real)
 ```
 
+- [Mulknap algorithm](http://hjemmesider.diku.dk/~pisinger/mulknap.c)
+
+```julia
+    obj, sol = mulknap(costs::Vector, weights::Vector, capacity::Vector)
+```
+
 ## Note
-You need cmake and a C compiler to compile Pisinger algorithms. The compilation takes place in `PisingerKnapsack.jl/deps/libpisinger/`. The structure of the folder is : 
+You need cmake and a C compiler to compile Pisinger algorithms. The compilation takes place in `PisingerKnapsack.jl/deps/libpisinger/`. The structure of the folder is :
 
 ```
 libpisinger
@@ -61,8 +67,8 @@ libpisinger
 │       └── libbouknap.dylib
 ```
 
-If the build step does not work, these are the 
-steps to build the dynamic libraries of Pisinger's algorithms : 
+If the build step does not work, these are the
+steps to build the dynamic libraries of Pisinger's algorithms :
 
 1. Download source files in Pisinger's website and, for each algorithm, move the corresponding file to `PisingerKnapsack.jl/deps/libpisinger/<algoname>`
 2. Create directory `build` in `PisingerKnapsack.jl/deps/libpisinger/<algoname>`
